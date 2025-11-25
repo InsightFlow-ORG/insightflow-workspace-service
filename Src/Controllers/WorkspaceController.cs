@@ -71,13 +71,47 @@ namespace insightflow_workspace_service.Src.Controllers
             try
             {
                 var workspace = await _workspaceRepository.GetWorkspaceById(workspaceId);
-                
+
                 if (workspace == null)
                 {
                     return NotFound(new { message = "Workspace not found." });
                 }
 
                 return Ok(workspace);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPatch("workspaces/{workspaceId}")]
+        public async Task<IActionResult> UpdateWorkspace([FromRoute] Guid workspaceId, [FromForm] UpdateWorkspaceDto updateWorkspaceDto)
+        {
+
+            if (ModelState.IsValid == false) return BadRequest(ModelState);
+
+            if (workspaceId == Guid.Empty)
+            {
+                return BadRequest(new { message = "Invalid workspaceId." });
+            }
+
+            if (updateWorkspaceDto.Name == null && updateWorkspaceDto.Image == null)
+            {
+                return BadRequest(new { message = "At least one field (Name or Image) must be provided for update." });
+            }
+
+            try
+            {
+                var response = await _workspaceRepository.UpdateWorkspace(workspaceId, updateWorkspaceDto);
+
+                if (response == false)
+                {
+                    return NotFound(new { message = "Workspace not found." });
+                }
+
+                return Ok(new { success = true });
+
             }
             catch (Exception ex)
             {

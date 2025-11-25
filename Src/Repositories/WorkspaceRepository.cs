@@ -42,16 +42,37 @@ namespace insightflow_workspace_service.Src.Repositories
             return Task.FromResult(workspaces);
         }
 
-        public async Task<WorkspaceDto?> GetWorkspaceById(Guid WorkspaceId)
+        public Task<WorkspaceDto?> GetWorkspaceById(Guid WorkspaceId)
         {
             var workspace = _context.Workspaces.FirstOrDefault(w => w.Id == WorkspaceId);
 
             if (workspace == null)
             {
-                return null;
+                return Task.FromResult<WorkspaceDto?>(null);
             }
 
-            return workspace.ToWorkspaceDto();
+            return Task.FromResult<WorkspaceDto?>(workspace.ToWorkspaceDto());
+        }
+
+        public Task<bool> UpdateWorkspace(Guid workspaceId, UpdateWorkspaceDto updateWorkspaceDto)
+        {
+            var workspace = _context.Workspaces.FirstOrDefault(w => w.Id == workspaceId);
+
+            if (workspace == null)
+            {
+                return Task.FromResult(false);
+            } else if (workspace.IsActive == false)
+            {
+                return Task.FromResult(false);
+            } else if (workspace.Name == updateWorkspaceDto.Name)
+            {
+                throw new Exception("The new name is the same as the current name.");
+            } 
+
+            workspace.Name = updateWorkspaceDto.Name ?? workspace.Name;
+            workspace.Image = updateWorkspaceDto.Image ?? workspace.Image;
+
+            return Task.FromResult(true);
         }
     }
 }
