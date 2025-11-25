@@ -8,17 +8,22 @@ namespace insightflow_workspace_service.Src.Dtos
 {
     public class CreateWorkspaceDto
     {
-        [Required]
+        [Required(ErrorMessage = "Workspace name is required.")]
         public string Name { get; set; } = string.Empty;
-        [Required]
+        
+        [Required(ErrorMessage = "Workspace description is required.")]
         public string Description { get; set; } = string.Empty;
-        [Required]
+
+        [Required(ErrorMessage = "Workspace theme is required.")]
         public string Theme { get; set; } = string.Empty;
-        [Required]
+
+        [Required(ErrorMessage = "Workspace image is required.")]
         public IFormFile Image { get; set; } = null!;
-        [Required]
+
+        [Required(ErrorMessage = "Workspace owner ID is required.")]
         public Guid OwnerId { get; set; }
-        [Required]
+
+        [Required(ErrorMessage = "Workspace username is required.")]
         public string Username { get; set; } = string.Empty;
     }
 }

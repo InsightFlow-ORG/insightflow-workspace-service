@@ -25,35 +25,21 @@ namespace insightflow_workspace_service.Src.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             
-            try
+            var response = await _workspaceRepository.CreateWorkspace(createWorkspaceDto);
+
+            if (response == false)
             {
-                var response = await _workspaceRepository.CreateWorkspace(createWorkspaceDto);
-
-                if (response == false)
-                {
-                    return BadRequest(new { message = "A workspace with the same name already exists." });
-                }
-
-                return Ok(new { success = true });
-
-            } catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
+                return BadRequest(new { message = "A workspace with the same name already exists." });
             }
+
+            return Ok(new { success = true });
         }
 
         [HttpGet("workspaces")]
         public async Task<IActionResult> GetAllWorkspaces()
         {
-            try
-            {
-                var workspaces = await _workspaceRepository.GetAllWorkspaces();
-                return Ok(workspaces);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var workspaces = await _workspaceRepository.GetAllWorkspaces();
+            return Ok(workspaces);  
         }
 
         [HttpGet("workspaces/{userId}")]
@@ -64,15 +50,8 @@ namespace insightflow_workspace_service.Src.Controllers
                 return BadRequest(new { message = "Invalid userId." });
             }
 
-            try
-            {
-                var workspaces = await _workspaceRepository.GetAllWorkspacesByUser(userId);
-                return Ok(workspaces);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+            var workspaces = await _workspaceRepository.GetAllWorkspacesByUser(userId);
+            return Ok(workspaces);
         }
 
         [HttpGet("workspace/{workspaceId}")]
@@ -83,24 +62,18 @@ namespace insightflow_workspace_service.Src.Controllers
                 return BadRequest(new { message = "Invalid workspaceId." });
             }
 
-            try
-            {
-                var workspace = await _workspaceRepository.GetWorkspaceById(workspaceId);
+            var workspace = await _workspaceRepository.GetWorkspaceById(workspaceId);
 
-                if (workspace == null)
-                {
-                    return NotFound(new { message = "Workspace not found." });
-                }
-
-                return Ok(workspace);
-            }
-            catch (Exception ex)
+            if (workspace == null)
             {
-                return StatusCode(500, ex.Message);
+                return NotFound(new { message = "Workspace not found." });
             }
+
+            return Ok(workspace);
         }
 
         [HttpPatch("workspaces/{workspaceId}")]
+        [Consumes("multipart/form-data")]
         public async Task<IActionResult> UpdateWorkspace([FromRoute] Guid workspaceId, [FromForm] UpdateWorkspaceDto updateWorkspaceDto)
         {
 
@@ -111,27 +84,22 @@ namespace insightflow_workspace_service.Src.Controllers
                 return BadRequest(new { message = "Invalid workspaceId." });
             }
 
-            if (updateWorkspaceDto.Name == null && updateWorkspaceDto.Image == null)
+            if (updateWorkspaceDto.Name == null 
+            && updateWorkspaceDto.Image == null
+            && updateWorkspaceDto.Description == null
+            && updateWorkspaceDto.Theme == null)
             {
-                return BadRequest(new { message = "At least one field (Name or Image) must be provided for update." });
+                return BadRequest(new { message = "At least one field (Name, Image, Description, or Theme) must be provided for update." });
             }
 
-            try
+            var response = await _workspaceRepository.UpdateWorkspace(workspaceId, updateWorkspaceDto);
+
+            if (response == false)
             {
-                var response = await _workspaceRepository.UpdateWorkspace(workspaceId, updateWorkspaceDto);
-
-                if (response == false)
-                {
-                    return NotFound(new { message = "Error updating workspace." });
-                }
-
-                return Ok(new { success = true });
-
+                return BadRequest(new { message = "Error updating workspace. Possible reasons: workspace not found, inactive workspace, duplicate name, or no changes detected." });
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+
+            return Ok(new { success = true });
         }
 
         [HttpDelete("workspaces/{workspaceId}")]
@@ -142,22 +110,14 @@ namespace insightflow_workspace_service.Src.Controllers
                 return BadRequest(new { message = "Invalid workspaceId." });
             }
 
-            try
+            var response = await _workspaceRepository.DeleteWorkspace(workspaceId);
+
+            if (response == false)
             {
-                var response = await _workspaceRepository.DeleteWorkspace(workspaceId);
-
-                if (response == false)
-                {
-                    return NotFound(new { message = "Error deleting workspace." });
-                }
-
-                return Ok(new { success = true });
-
+                return NotFound(new { message = "Error deleting workspace." });
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+
+            return Ok(new { success = true });
         }
     }
 }
