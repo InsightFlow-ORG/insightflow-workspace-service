@@ -41,7 +41,7 @@ namespace insightflow_workspace_service.Src.Controllers
             }
         }
 
-        [HttpGet("/{userId}")]
+        [HttpGet("workspaces/{userId}")]
         public async Task<IActionResult> GetWorkspaces([FromRoute] Guid userId)
         {
             if (userId == Guid.Empty)
@@ -53,6 +53,31 @@ namespace insightflow_workspace_service.Src.Controllers
             {
                 var workspaces = await _workspaceRepository.GetAllWorkspacesByUser(userId);
                 return Ok(workspaces);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpGet("workspace/{workspaceId}")]
+        public async Task<IActionResult> GetWorkspace([FromRoute] Guid workspaceId)
+        {
+            if (workspaceId == Guid.Empty)
+            {
+                return BadRequest(new { message = "Invalid workspaceId." });
+            }
+
+            try
+            {
+                var workspace = await _workspaceRepository.GetWorkspaceById(workspaceId);
+                
+                if (workspace == null)
+                {
+                    return NotFound(new { message = "Workspace not found." });
+                }
+
+                return Ok(workspace);
             }
             catch (Exception ex)
             {

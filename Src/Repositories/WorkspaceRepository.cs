@@ -32,12 +32,6 @@ namespace insightflow_workspace_service.Src.Repositories
 
         public Task<List<WorkspaceByUserDto>> GetAllWorkspacesByUser(Guid userId)
         {
-
-            if (userId == Guid.Empty)
-            {
-                return Task.FromResult(new List<WorkspaceByUserDto>());
-            }
-
             var workspaces = _context.Workspaces
                 .Where(w => w.Members.Any(u => u.Id == userId))
                 .Select(w => w.ToWorkspaceByUser(userId))
@@ -46,6 +40,18 @@ namespace insightflow_workspace_service.Src.Repositories
                 .ToList();
             
             return Task.FromResult(workspaces);
+        }
+
+        public async Task<WorkspaceDto?> GetWorkspaceById(Guid WorkspaceId)
+        {
+            var workspace = _context.Workspaces.FirstOrDefault(w => w.Id == WorkspaceId);
+
+            if (workspace == null)
+            {
+                return null;
+            }
+
+            return workspace.ToWorkspaceDto();
         }
     }
 }

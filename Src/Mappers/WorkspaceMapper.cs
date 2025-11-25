@@ -34,12 +34,8 @@ namespace insightflow_workspace_service.Src.Mappers
         {
             return new WorkspaceDto
             {
-                Id = workspace.Id,
                 Name = workspace.Name,
-                Description = workspace.Description,
-                Theme = workspace.Theme,
                 Image = workspace.Image,
-                OwnerId = workspace.OwnerId,
                 workspaceMembers = workspace.Members
             };
         }
