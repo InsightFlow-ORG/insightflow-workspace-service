@@ -14,7 +14,8 @@ namespace insightflow_workspace_service.Src.Dtos
         public string Description { get; set; } = string.Empty;
         [Required]
         public string Theme { get; set; } = string.Empty;
-        public IFormFile? Image { get; set; }
+        [Required]
+        public IFormFile Image { get; set; } = null!;
         [Required]
         public Guid OwnerId { get; set; }
         [Required]

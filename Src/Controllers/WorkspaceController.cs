@@ -20,6 +20,7 @@ namespace insightflow_workspace_service.Src.Controllers
         }
 
         [HttpPost]
+        [Consumes("multipart/form-data")]
         public async Task<IActionResult> CreateWorkspace([FromForm] CreateWorkspaceDto createWorkspaceDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -30,7 +31,7 @@ namespace insightflow_workspace_service.Src.Controllers
 
                 if (response == false)
                 {
-                    return BadRequest(new { message = "Failed to create workspace." });
+                    return BadRequest(new { message = "A workspace with the same name already exists." });
                 }
 
                 return Ok(new { success = true });

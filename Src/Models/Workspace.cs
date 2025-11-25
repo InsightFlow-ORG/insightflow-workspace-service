@@ -11,7 +11,7 @@ namespace insightflow_workspace_service.Src.Models
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string Theme { get; set; } = string.Empty;
-        public IFormFile Image { get; set; } = null!;
+        public string Image { get; set; } = string.Empty;
         public Guid OwnerId { get; set; }
         public List<WorkspaceMember> Members { get; set; } = new List<WorkspaceMember>();
         public bool IsActive { get; set; } = true;

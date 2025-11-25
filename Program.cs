@@ -1,6 +1,12 @@
+using System;
+using DotNetEnv;
+using insightflow_workspace_service.Src.Configurations;
 using insightflow_workspace_service.Src.Data;
 using insightflow_workspace_service.Src.Interface;
 using insightflow_workspace_service.Src.Repositories;
+using insightflow_workspace_service.Src.Service;
+
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +16,21 @@ builder.Services.AddControllers();
 
 builder.Services.AddSingleton<Context>();
 builder.Services.AddScoped<IWorkspaceRepository, WorkspaceRepository>();
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
+
+var claudinarySettings = new CloudinarySettings()
+{
+    ApiKey = Environment.GetEnvironmentVariable("CLOUDINARY_API_KEY")!,
+    ApiSecret = Environment.GetEnvironmentVariable("CLOUDINARY_API_SECRET")!,
+    CloudName = Environment.GetEnvironmentVariable("CLOUDINARY_CLOUD_NAME")!
+};
+
+builder.Services.Configure<CloudinarySettings>(options =>
+{
+    options.ApiKey = claudinarySettings.ApiKey;
+    options.ApiSecret = claudinarySettings.ApiSecret;
+    options.CloudName = claudinarySettings.CloudName;
+});
 
 var app = builder.Build();
 

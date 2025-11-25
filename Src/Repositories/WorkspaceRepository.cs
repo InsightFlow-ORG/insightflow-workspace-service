@@ -13,21 +13,38 @@ namespace insightflow_workspace_service.Src.Repositories
     public class WorkspaceRepository : IWorkspaceRepository
     {
         private readonly Context _context;
+        private readonly ICloudinaryService _cloudinaryService;
 
-        public WorkspaceRepository(Context context)
+        public WorkspaceRepository(Context context, ICloudinaryService cloudinaryService)
         {
             _context = context;
+            _cloudinaryService = cloudinaryService;
         }
 
-        public Task<bool> CreateWorkspace(CreateWorkspaceDto createWorkspaceDto)
+        public async Task<bool> CreateWorkspace(CreateWorkspaceDto createWorkspaceDto)
         {
             if (_context.Workspaces.Any(w => w.Name == createWorkspaceDto.Name))
             {
-                return Task.FromResult(false);
+                return false;
             }
 
-            _context.Workspaces.Add(createWorkspaceDto.ToWorkspace());
-            return Task.FromResult(true);
+            try
+            {
+                var imageUrl = await _cloudinaryService.UploadImageAsync(createWorkspaceDto.Image);
+
+                if (string.IsNullOrEmpty(imageUrl))
+                {
+                    throw new Exception("Image upload failed.");
+                }
+
+                _context.Workspaces.Add(createWorkspaceDto.ToWorkspace(imageUrl));
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error uploading image: " + ex.Message);
+            }
+            
         }
 
         public Task<List<WorkspaceByUserDto>> GetAllWorkspacesByUser(Guid userId)
@@ -68,15 +85,38 @@ namespace insightflow_workspace_service.Src.Repositories
             } else if (workspace.IsActive == false)
             {
                 return Task.FromResult(false);
-            } else if (workspace.Name == updateWorkspaceDto.Name)
+            } 
+            else if (_context.Workspaces.Any(w => w.Name == updateWorkspaceDto.Name))
+            {
+                throw new Exception("A workspace with the same name already exists.");
+            }
+            else if (workspace.Name == updateWorkspaceDto.Name)
             {
                 throw new Exception("The new name is the same as the current name.");
             } 
 
             workspace.Name = updateWorkspaceDto.Name ?? workspace.Name;
-            workspace.Image = updateWorkspaceDto.Image ?? workspace.Image;
 
-            return Task.FromResult(true);
+            try
+            {
+                if (updateWorkspaceDto.Image != null)
+                {
+                    var imageUrl = _cloudinaryService.UploadImageAsync(updateWorkspaceDto.Image).Result;
+
+                    if (string.IsNullOrEmpty(imageUrl))
+                    {
+                        throw new Exception("Image upload failed.");
+                    }
+
+                    workspace.Image = imageUrl;
+                }
+
+                return Task.FromResult(true);
+            } catch (Exception ex)
+            {
+                throw new Exception("Error uploading image: " + ex.Message);
+            }
+    
         }
 
         public Task<bool> DeleteWorkspace(Guid workspaceId)

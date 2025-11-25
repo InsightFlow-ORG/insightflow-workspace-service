@@ -9,14 +9,14 @@ namespace insightflow_workspace_service.Src.Mappers
 {
     public static class WorkspaceMapper
     {
-        public static Workspace ToWorkspace(this CreateWorkspaceDto createWorkspaceDto)
+        public static Workspace ToWorkspace(this CreateWorkspaceDto createWorkspaceDto, string imageUrl)
         {
             return new Workspace
             {
                 Name = createWorkspaceDto.Name,
                 Description = createWorkspaceDto.Description,
                 Theme = createWorkspaceDto.Theme,
-                Image = createWorkspaceDto.Image ?? null!,
+                Image = imageUrl,
                 OwnerId = createWorkspaceDto.OwnerId,
                 Members = new List<WorkspaceMember>
                 {
