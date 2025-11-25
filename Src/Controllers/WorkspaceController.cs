@@ -107,7 +107,33 @@ namespace insightflow_workspace_service.Src.Controllers
 
                 if (response == false)
                 {
-                    return NotFound(new { message = "Workspace not found." });
+                    return NotFound(new { message = "Error updating workspace." });
+                }
+
+                return Ok(new { success = true });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpDelete("workspaces/{workspaceId}")]
+        public async Task<IActionResult> DeleteWorkspace([FromRoute] Guid workspaceId)
+        {
+            if (workspaceId == Guid.Empty)
+            {
+                return BadRequest(new { message = "Invalid workspaceId." });
+            }
+
+            try
+            {
+                var response = await _workspaceRepository.DeleteWorkspace(workspaceId);
+
+                if (response == false)
+                {
+                    return NotFound(new { message = "Error deleting workspace." });
                 }
 
                 return Ok(new { success = true });

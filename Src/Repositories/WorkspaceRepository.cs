@@ -34,6 +34,7 @@ namespace insightflow_workspace_service.Src.Repositories
         {
             var workspaces = _context.Workspaces
                 .Where(w => w.Members.Any(u => u.Id == userId))
+                .Where(w => w.IsActive)
                 .Select(w => w.ToWorkspaceByUser(userId))
                 .Where(dto => dto != null)
                 .Select(dto => dto!)
@@ -47,6 +48,9 @@ namespace insightflow_workspace_service.Src.Repositories
             var workspace = _context.Workspaces.FirstOrDefault(w => w.Id == WorkspaceId);
 
             if (workspace == null)
+            {
+                return Task.FromResult<WorkspaceDto?>(null);
+            } if (workspace.IsActive == false)
             {
                 return Task.FromResult<WorkspaceDto?>(null);
             }
@@ -72,6 +76,22 @@ namespace insightflow_workspace_service.Src.Repositories
             workspace.Name = updateWorkspaceDto.Name ?? workspace.Name;
             workspace.Image = updateWorkspaceDto.Image ?? workspace.Image;
 
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> DeleteWorkspace(Guid workspaceId)
+        {
+            var workspace = _context.Workspaces.FirstOrDefault(w => w.Id == workspaceId);
+
+            if (workspace == null)
+            {
+                return Task.FromResult(false);
+            } else if (workspace.IsActive == false)
+            {
+                return Task.FromResult(false);
+            }
+
+            workspace.IsActive = false;
             return Task.FromResult(true);
         }
     }

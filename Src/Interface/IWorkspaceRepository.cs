@@ -12,5 +12,6 @@ namespace insightflow_workspace_service.Src.Interface
         public Task<List<WorkspaceByUserDto>> GetAllWorkspacesByUser(Guid UserId);
         public Task<WorkspaceDto?> GetWorkspaceById(Guid WorkspaceId);
         public Task<bool> UpdateWorkspace(Guid workspaceId, UpdateWorkspaceDto updateWorkspaceDto);
+        public Task<bool> DeleteWorkspace(Guid workspaceId);
     }
 }
