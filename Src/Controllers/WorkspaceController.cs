@@ -42,6 +42,20 @@ namespace insightflow_workspace_service.Src.Controllers
             }
         }
 
+        [HttpGet("workspaces")]
+        public async Task<IActionResult> GetAllWorkspaces()
+        {
+            try
+            {
+                var workspaces = await _workspaceRepository.GetAllWorkspaces();
+                return Ok(workspaces);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
         [HttpGet("workspaces/{userId}")]
         public async Task<IActionResult> GetWorkspaces([FromRoute] Guid userId)
         {

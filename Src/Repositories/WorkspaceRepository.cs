@@ -134,5 +134,11 @@ namespace insightflow_workspace_service.Src.Repositories
             workspace.IsActive = false;
             return Task.FromResult(true);
         }
+
+        public Task<List<Workspace>> GetAllWorkspaces()
+        {
+            var workspaces = _context.Workspaces.ToList();
+            return Task.FromResult(workspaces);
+        }
     }
 }
