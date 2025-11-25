@@ -29,5 +29,23 @@ namespace insightflow_workspace_service.Src.Repositories
             _context.Workspaces.Add(createWorkspaceDto.ToWorkspace());
             return Task.FromResult(true);
         }
+
+        public Task<List<WorkspaceByUserDto>> GetAllWorkspacesByUser(Guid userId)
+        {
+
+            if (userId == Guid.Empty)
+            {
+                return Task.FromResult(new List<WorkspaceByUserDto>());
+            }
+
+            var workspaces = _context.Workspaces
+                .Where(w => w.Members.Any(u => u.Id == userId))
+                .Select(w => w.ToWorkspaceByUser(userId))
+                .Where(dto => dto != null)
+                .Select(dto => dto!)
+                .ToList();
+            
+            return Task.FromResult(workspaces);
+        }
     }
 }

@@ -9,5 +9,6 @@ namespace insightflow_workspace_service.Src.Interface
     public interface IWorkspaceRepository
     {
         public Task<bool> CreateWorkspace(CreateWorkspaceDto createWorkspaceDto);
+        public Task<List<WorkspaceByUserDto>> GetAllWorkspacesByUser(Guid UserId);
     }
 }

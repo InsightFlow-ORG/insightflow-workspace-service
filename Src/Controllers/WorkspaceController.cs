@@ -40,5 +40,24 @@ namespace insightflow_workspace_service.Src.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpGet("/{userId}")]
+        public async Task<IActionResult> GetWorkspaces([FromRoute] Guid userId)
+        {
+            if (userId == Guid.Empty)
+            {
+                return BadRequest(new { message = "Invalid userId." });
+            }
+
+            try
+            {
+                var workspaces = await _workspaceRepository.GetAllWorkspacesByUser(userId);
+                return Ok(workspaces);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

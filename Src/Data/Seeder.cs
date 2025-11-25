@@ -1,0 +1,41 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using insightflow_workspace_service.Src.Models;
+
+namespace insightflow_workspace_service.Src.Data
+{
+    public class Seeder
+    {
+        public static void Seed(Context context)
+        {
+            for (int i = 0; i <= 10; i++)
+            {
+                context.Workspaces.Add(new Workspace
+                {
+                    Id = Guid.NewGuid(),
+                    Name = $"Workspace {i + 1}",
+                    Description = $"This is the description for Workspace {i + 1}",
+                    Theme = "astral",
+                    OwnerId = Guid.Parse("b79cf89e-0b7e-4fb7-be91-2105e56cf6e1"),
+                    Members = new List<WorkspaceMember>()
+                    {
+                        new WorkspaceMember
+                        {
+                            Id = Guid.Parse("b79cf89e-0b7e-4fb7-be91-2105e56cf6e1"),
+                            Role = "Owner"
+                        },
+                        
+                        new WorkspaceMember
+                        {
+                            Id = Guid.Parse("d290f1ee-6c54-4b01-90e6-d701748f0851"),
+                            Role = "Editor"
+                        }
+                    },
+                });
+
+            }
+        }
+    }
+}

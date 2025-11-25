@@ -16,7 +16,7 @@ namespace insightflow_workspace_service.Src.Mappers
                 Name = createWorkspaceDto.Name,
                 Description = createWorkspaceDto.Description,
                 Theme = createWorkspaceDto.Theme,
-                Image = createWorkspaceDto.Image,
+                Image = createWorkspaceDto.Image ?? null!,
                 OwnerId = createWorkspaceDto.OwnerId,
                 Members = new List<WorkspaceMember>
                 {
@@ -24,7 +24,7 @@ namespace insightflow_workspace_service.Src.Mappers
                     {
                         Id = createWorkspaceDto.OwnerId,
                         UserName = createWorkspaceDto.Username,
-                        Role = 0
+                        Role = "Owner"
                     }
                 },
             };
@@ -41,6 +41,24 @@ namespace insightflow_workspace_service.Src.Mappers
                 Image = workspace.Image,
                 OwnerId = workspace.OwnerId,
                 workspaceMembers = workspace.Members
+            };
+        }
+
+        public static WorkspaceByUserDto? ToWorkspaceByUser(this Workspace workspace, Guid id)
+        {
+            var member = workspace.Members.FirstOrDefault(u => u.Id == id);
+
+            if (member == null)
+            {
+                return null;
+            }
+
+            return new WorkspaceByUserDto
+            {
+                Id = workspace.Id,
+                Name = workspace.Name,
+                Image = workspace.Image,
+                Role = member.Role
             };
         }
     }
