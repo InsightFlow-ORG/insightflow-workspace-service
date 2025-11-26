@@ -7,6 +7,7 @@ using insightflow_workspace_service.Src.Dtos;
 using insightflow_workspace_service.Src.Interface;
 using insightflow_workspace_service.Src.Mappers;
 using insightflow_workspace_service.Src.Models;
+using insightflow_workspace_service.Src.Shared;
 
 namespace insightflow_workspace_service.Src.Repositories
 {
@@ -21,23 +22,23 @@ namespace insightflow_workspace_service.Src.Repositories
             _cloudinaryService = cloudinaryService;
         }
 
-        public async Task<bool> CreateWorkspace(CreateWorkspaceDto createWorkspaceDto)
+        public async Task<Result<bool>> CreateWorkspace(CreateWorkspaceDto createWorkspaceDto)
         {
             if (_context.Workspaces.Any(w => w.Name.Equals(createWorkspaceDto.Name, StringComparison.OrdinalIgnoreCase)))
             {
-                return false;
+                return Result<bool>.Conflict("Workspace with the same name already exists.");
             }
 
             var imageUrl = await _cloudinaryService.UploadImageAsync(createWorkspaceDto.Image);
 
-            if (string.IsNullOrEmpty(imageUrl)) return false;
+            if (string.IsNullOrEmpty(imageUrl)) return Result<bool>.BadRequest("Image upload failed.");
 
             _context.Workspaces.Add(createWorkspaceDto.ToWorkspace(imageUrl));
-            return true;
+            return Result<bool>.Success(true);
 
         }
 
-        public Task<List<WorkspaceByUserDto>> GetAllWorkspacesByUser(Guid userId)
+        public Task<Result<List<WorkspaceByUserDto>>> GetAllWorkspacesByUser(Guid userId)
         {
             var workspaces = _context.Workspaces
                 .Where(w => w.Members.Any(u => u.Id == userId))
@@ -47,32 +48,36 @@ namespace insightflow_workspace_service.Src.Repositories
                 .Select(dto => dto!)
                 .ToList();
             
-            return Task.FromResult(workspaces);
+            if (workspaces.Count == 0)
+            {
+                return Task.FromResult(Result<List<WorkspaceByUserDto>>.NotFound("No workspaces found for the specified user."));
+            }
+            
+            return Task.FromResult(Result<List<WorkspaceByUserDto>>.Success(workspaces));
         }
 
-        public Task<WorkspaceDto?> GetWorkspaceById(Guid WorkspaceId)
+        public Task<Result<WorkspaceDto?>> GetWorkspaceById(Guid WorkspaceId)
         {
             var workspace = _context.Workspaces.FirstOrDefault(w => w.Id == WorkspaceId);
 
             if (workspace == null)
             {
-                return Task.FromResult<WorkspaceDto?>(null);
+                return Task.FromResult(Result<WorkspaceDto?>.NotFound("Workspace not found."));
             } if (workspace.IsActive == false)
             {
-                return Task.FromResult<WorkspaceDto?>(null);
+                return Task.FromResult(Result<WorkspaceDto?>.NotFound("Workspace not found."));
             }
 
-            return Task.FromResult<WorkspaceDto?>(workspace.ToWorkspaceDto());
+            return Task.FromResult(Result<WorkspaceDto?>.Success(workspace.ToWorkspaceDto()));
         }
 
-        public async Task<bool> UpdateWorkspace(Guid workspaceId, UpdateWorkspaceDto updateWorkspaceDto)
+        public async Task<Result<bool>> UpdateWorkspace(Guid workspaceId, UpdateWorkspaceDto updateWorkspaceDto)
         {
             var workspace = _context.Workspaces.FirstOrDefault(w => w.Id == workspaceId);
 
-            if (workspace == null) return false;
-            if (!workspace.IsActive) return false;
-            if (_context.Workspaces.Any(w => w.Name == updateWorkspaceDto.Name && w.Id != workspaceId)) return false;
-            if (workspace.Name == updateWorkspaceDto.Name) return false;
+            if (workspace == null) return Result<bool>.NotFound("Workspace not found.");
+            if (!workspace.IsActive) return Result<bool>.BadRequest("Workspace is not active.");
+            if (_context.Workspaces.Any(w => w.Name == updateWorkspaceDto.Name && w.Id != workspaceId)) return Result<bool>.Conflict("Workspace with the same name already exists.");
             
             workspace.Name = updateWorkspaceDto.Name ?? workspace.Name;
             workspace.Description = updateWorkspaceDto.Description ??  workspace.Description;
@@ -84,36 +89,36 @@ namespace insightflow_workspace_service.Src.Repositories
 
                 if (string.IsNullOrEmpty(imageUrl))
                 {
-                    return false;
+                    return Result<bool>.BadRequest("Image upload failed.");
                 }
 
                 workspace.Image = imageUrl;
             }
 
-            return true;
+            return Result<bool>.Success(true);
     
         }
 
-        public Task<bool> DeleteWorkspace(Guid workspaceId)
+        public Task<Result<bool>> DeleteWorkspace(Guid workspaceId)
         {
             var workspace = _context.Workspaces.FirstOrDefault(w => w.Id == workspaceId);
 
             if (workspace == null)
             {
-                return Task.FromResult(false);
+                return Task.FromResult(Result<bool>.NotFound("Workspace not found."));
             } else if (workspace.IsActive == false)
             {
-                return Task.FromResult(false);
+                return Task.FromResult(Result<bool>.BadRequest("Workspace is not active."));
             }
 
             workspace.IsActive = false;
-            return Task.FromResult(true);
+            return Task.FromResult(Result<bool>.Success(true));
         }
 
-        public Task<List<Workspace>> GetAllWorkspaces()
+        public Task<Result<List<Workspace>>> GetAllWorkspaces()
         {
             var workspaces = _context.Workspaces.ToList();
-            return Task.FromResult(workspaces);
+            return Task.FromResult(Result<List<Workspace>>.Success(workspaces));
         }
     }
 }

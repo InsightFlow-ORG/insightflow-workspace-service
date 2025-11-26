@@ -25,21 +25,21 @@ namespace insightflow_workspace_service.Src.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             
-            var response = await _workspaceRepository.CreateWorkspace(createWorkspaceDto);
+            var result = await _workspaceRepository.CreateWorkspace(createWorkspaceDto);
 
-            if (response == false)
+            if (!result.IsSuccess)
             {
-                return BadRequest(new { message = "A workspace with the same name already exists." });
+                return StatusCode(result.StatusCode, new { message = result.ErrorMessage });
             }
 
-            return Ok(new { success = true });
+            return Ok(result.Data);
         }
 
         [HttpGet("workspaces")]
         public async Task<IActionResult> GetAllWorkspaces()
         {
-            var workspaces = await _workspaceRepository.GetAllWorkspaces();
-            return Ok(workspaces);  
+            var result = await _workspaceRepository.GetAllWorkspaces();
+            return Ok(result.Data);  
         }
 
         [HttpGet("workspaces/{userId}")]
@@ -50,8 +50,14 @@ namespace insightflow_workspace_service.Src.Controllers
                 return BadRequest(new { message = "Invalid userId." });
             }
 
-            var workspaces = await _workspaceRepository.GetAllWorkspacesByUser(userId);
-            return Ok(workspaces);
+            var result = await _workspaceRepository.GetAllWorkspacesByUser(userId);
+
+            if (!result.IsSuccess)
+            {
+                return StatusCode(result.StatusCode, new { message = result.ErrorMessage });
+            }
+
+            return Ok(result.Data);
         }
 
         [HttpGet("workspace/{workspaceId}")]
@@ -62,14 +68,14 @@ namespace insightflow_workspace_service.Src.Controllers
                 return BadRequest(new { message = "Invalid workspaceId." });
             }
 
-            var workspace = await _workspaceRepository.GetWorkspaceById(workspaceId);
+            var result = await _workspaceRepository.GetWorkspaceById(workspaceId);
 
-            if (workspace == null)
+            if (!result.IsSuccess)
             {
-                return NotFound(new { message = "Workspace not found." });
+                return StatusCode(result.StatusCode, new { message = result.ErrorMessage });
             }
 
-            return Ok(workspace);
+            return Ok(result.Data);   
         }
 
         [HttpPatch("workspaces/{workspaceId}")]
@@ -92,14 +98,14 @@ namespace insightflow_workspace_service.Src.Controllers
                 return BadRequest(new { message = "At least one field (Name, Image, Description, or Theme) must be provided for update." });
             }
 
-            var response = await _workspaceRepository.UpdateWorkspace(workspaceId, updateWorkspaceDto);
+            var result = await _workspaceRepository.UpdateWorkspace(workspaceId, updateWorkspaceDto);
 
-            if (response == false)
+            if (!result.IsSuccess)
             {
-                return BadRequest(new { message = "Error updating workspace. Possible reasons: workspace not found, inactive workspace, duplicate name, or no changes detected." });
+                return StatusCode(result.StatusCode, new { message = result.ErrorMessage });
             }
 
-            return Ok(new { success = true });
+            return Ok(result.Data);
         }
 
         [HttpDelete("workspaces/{workspaceId}")]
@@ -110,14 +116,14 @@ namespace insightflow_workspace_service.Src.Controllers
                 return BadRequest(new { message = "Invalid workspaceId." });
             }
 
-            var response = await _workspaceRepository.DeleteWorkspace(workspaceId);
+            var result = await _workspaceRepository.DeleteWorkspace(workspaceId);
 
-            if (response == false)
+            if (!result.IsSuccess)
             {
-                return NotFound(new { message = "Error deleting workspace." });
+                return StatusCode(result.StatusCode, new { message = result.ErrorMessage });
             }
 
-            return Ok(new { success = true });
+            return Ok(result.Data);
         }
     }
 }
