@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace insightflow_workspace_service.Src.Controllers
 {
     [Controller]
-    [Route("workspaces")]
+    [Route("workspace")]
     public class WorkspaceController : ControllerBase
     {
         private readonly IWorkspaceRepository _workspaceRepository;
@@ -35,14 +35,14 @@ namespace insightflow_workspace_service.Src.Controllers
             return Ok(result.Data);
         }
 
-        [HttpGet("workspaces")]
+        [HttpGet()]
         public async Task<IActionResult> GetAllWorkspaces()
         {
             var result = await _workspaceRepository.GetAllWorkspaces();
             return Ok(result.Data);  
         }
 
-        [HttpGet("workspaces/{userId}")]
+        [HttpGet("{userId}")]
         public async Task<IActionResult> GetWorkspaces([FromRoute] Guid userId)
         {
             if (userId == Guid.Empty)
@@ -78,7 +78,7 @@ namespace insightflow_workspace_service.Src.Controllers
             return Ok(result.Data);   
         }
 
-        [HttpPatch("workspaces/{workspaceId}")]
+        [HttpPatch("{workspaceId}")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> UpdateWorkspace([FromRoute] Guid workspaceId, [FromForm] UpdateWorkspaceDto updateWorkspaceDto)
         {
@@ -108,7 +108,7 @@ namespace insightflow_workspace_service.Src.Controllers
             return Ok(result.Data);
         }
 
-        [HttpDelete("workspaces/{workspaceId}")]
+        [HttpDelete("{workspaceId}")]
         public async Task<IActionResult> DeleteWorkspace([FromRoute] Guid workspaceId)
         {
             if (workspaceId == Guid.Empty)
