@@ -32,6 +32,16 @@ builder.Services.Configure<CloudinarySettings>(options =>
     options.CloudName = claudinarySettings.CloudName;
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowNextJS", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000") // URL de tu Next.js
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -47,6 +57,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowNextJS");
 app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();
