@@ -36,11 +36,16 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowNextJS", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") // URL de tu Next.js
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.WithOrigins(
+            "http://localhost:3000",
+            "https://insightflow-frontend-fd042.web.app",
+            "https://insightflow-frontend-fd042.firebaseapp.com"
+        )
+        .AllowAnyHeader()
+        .AllowAnyMethod();
     });
 });
+
 
 var app = builder.Build();
 
