@@ -11,17 +11,37 @@ using insightflow_workspace_service.Src.Shared;
 
 namespace insightflow_workspace_service.Src.Repositories
 {
+    /// <summary>
+    /// Clase que implementa el repositorio de espacios de trabajo.
+    /// </summary>
     public class WorkspaceRepository : IWorkspaceRepository
     {
+        /// <summary>
+        /// Contexto de la base de datos.
+        /// </summary>
         private readonly Context _context;
+
+        /// <summary>
+        /// Servicio de Cloudinary para la gestión de imágenes.
+        /// </summary>
         private readonly ICloudinaryService _cloudinaryService;
 
+        /// <summary>
+        /// Constructor de la clase WorkspaceRepository.
+        /// </summary>
+        /// <param name="context">Contexto de la base de datos.</param>
+        /// <param name="cloudinaryService">Servicio de Cloudinary para la gestión de imágenes.</param>
         public WorkspaceRepository(Context context, ICloudinaryService cloudinaryService)
         {
             _context = context;
             _cloudinaryService = cloudinaryService;
         }
 
+        /// <summary>
+        /// Crea un nuevo espacio de trabajo.
+        /// </summary>
+        /// <param name="createWorkspaceDto">Datos para crear un nuevo espacio de trabajo.</param>
+        /// <returns>Resultado de la operación indicando éxito o error.</returns>
         public async Task<Result<bool>> CreateWorkspace(CreateWorkspaceDto createWorkspaceDto)
         {
             if (_context.Workspaces.Any(w => w.Name.Equals(createWorkspaceDto.Name, StringComparison.OrdinalIgnoreCase)))
@@ -38,6 +58,11 @@ namespace insightflow_workspace_service.Src.Repositories
 
         }
 
+        /// <summary>
+        /// Obtiene todos los espacios de trabajo asociados a un usuario.
+        /// </summary>
+        /// <param name="userId">Identificador del usuario.</param>
+        /// <returns>Lista de espacios de trabajo asociados al usuario.</returns>
         public Task<Result<List<WorkspaceByUserDto>>> GetAllWorkspacesByUser(Guid userId)
         {
             var workspaces = _context.Workspaces
@@ -56,6 +81,11 @@ namespace insightflow_workspace_service.Src.Repositories
             return Task.FromResult(Result<List<WorkspaceByUserDto>>.Success(workspaces));
         }
 
+        /// <summary>
+        /// Obtiene un espacio de trabajo por su ID.
+        /// </summary>
+        /// <param name="WorkspaceId">Identificador del espacio de trabajo.</param>
+        /// <returns>Espacio de trabajo correspondiente al ID proporcionado.</returns>
         public Task<Result<WorkspaceDto?>> GetWorkspaceById(Guid WorkspaceId)
         {
             var workspace = _context.Workspaces.FirstOrDefault(w => w.Id == WorkspaceId);
@@ -70,7 +100,13 @@ namespace insightflow_workspace_service.Src.Repositories
 
             return Task.FromResult(Result<WorkspaceDto?>.Success(workspace.ToWorkspaceDto()));
         }
-
+        
+        /// <summary>
+        /// Actualiza un espacio de trabajo existente.
+        /// </summary>
+        /// <param name="workspaceId">Identificador del espacio de trabajo.</param>
+        /// <param name="updateWorkspaceDto">Datos para actualizar el espacio de trabajo.</param>
+        /// <returns>Resultado de la operación indicando éxito o error.</returns>
         public async Task<Result<bool>> UpdateWorkspace(Guid workspaceId, UpdateWorkspaceDto updateWorkspaceDto)
         {
             var workspace = _context.Workspaces.FirstOrDefault(w => w.Id == workspaceId);
@@ -97,8 +133,13 @@ namespace insightflow_workspace_service.Src.Repositories
 
             return Result<bool>.Success(true);
     
-        }
+        }  
 
+        /// <summary>
+        /// Elimina (desactiva) un espacio de trabajo por su ID.
+        /// </summary>
+        /// <param name="workspaceId">Identificador del espacio de trabajo.</param>
+        /// <returns>Resultado de la operación indicando éxito o error.</returns>
         public Task<Result<bool>> DeleteWorkspace(Guid workspaceId)
         {
             var workspace = _context.Workspaces.FirstOrDefault(w => w.Id == workspaceId);
@@ -115,6 +156,10 @@ namespace insightflow_workspace_service.Src.Repositories
             return Task.FromResult(Result<bool>.Success(true));
         }
 
+        /// <summary>
+        /// Obtiene todos los espacios de trabajo.
+        /// </summary>
+        /// <returns>Lista de todos los espacios de trabajo.</returns>
         public Task<Result<List<Workspace>>> GetAllWorkspaces()
         {
             var workspaces = _context.Workspaces.ToList();

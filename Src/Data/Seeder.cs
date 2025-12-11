@@ -6,8 +6,15 @@ using insightflow_workspace_service.Src.Models;
 
 namespace insightflow_workspace_service.Src.Data
 {
+    /// <summary>
+    /// Clase encargada de poblar datos iniciales en el contexto de la base de datos en memoria.
+    /// </summary>
     public class Seeder
     {
+        /// <summary>
+        /// Método para poblar datos iniciales en el contexto.
+        /// </summary>
+        /// <param name="context">Contexto de la base de datos en memoria</param>
         public static void Seed(Context context)
         {
             for (int i = 0; i <= 10; i++)

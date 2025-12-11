@@ -7,8 +7,17 @@ using insightflow_workspace_service.Src.Models;
 
 namespace insightflow_workspace_service.Src.Mappers
 {
+    /// <summary>
+    /// Clase estática para mapear entre diferentes representaciones de espacios de trabajo.
+    /// </summary>
     public static class WorkspaceMapper
     {
+        /// <summary>
+        /// Convierte un CreateWorkspaceDto en un objeto Workspace.
+        /// </summary>
+        /// <param name="createWorkspaceDto">Datos para crear el workspace.</param>
+        /// <param name="imageUrl">URL de la imagen del workspace.</param>
+        /// <returns>Objeto Workspace creado.</returns>
         public static Workspace ToWorkspace(this CreateWorkspaceDto createWorkspaceDto, string imageUrl)
         {
             return new Workspace
@@ -30,6 +39,11 @@ namespace insightflow_workspace_service.Src.Mappers
             };
         }
 
+        /// <summary>
+        /// Convierte un objeto Workspace en un WorkspaceDto.
+        /// </summary>
+        /// <param name="workspace">Objeto Workspace a convertir.</param>
+        /// <returns>Objeto WorkspaceDto resultante.</returns>
         public static WorkspaceDto ToWorkspaceDto(this Workspace workspace)
         {
             return new WorkspaceDto
@@ -40,6 +54,12 @@ namespace insightflow_workspace_service.Src.Mappers
             };
         }
 
+        /// <summary>
+        /// Convierte un objeto Workspace en un WorkspaceByUserDto basado en el ID del usuario.
+        /// </summary>
+        /// <param name="workspace">Objeto Workspace a convertir.</param>
+        /// <param name="id">ID del usuario para filtrar el workspace.</param>
+        /// <returns>Objeto WorkspaceByUserDto resultante o null si el usuario no es miembro.</returns>
         public static WorkspaceByUserDto? ToWorkspaceByUser(this Workspace workspace, Guid id)
         {
             var member = workspace.Members.FirstOrDefault(u => u.Id == id);

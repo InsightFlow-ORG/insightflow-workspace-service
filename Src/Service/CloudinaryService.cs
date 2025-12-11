@@ -10,10 +10,20 @@ using Microsoft.Extensions.Options;
 
 namespace insightflow_workspace_service.Src.Service
 {
+    /// <summary>
+    /// Servicio para manejar la subida de imágenes a Cloudinary.
+    /// </summary>
     public class CloudinaryService : ICloudinaryService
     {
+        /// <summary>
+        /// Instancia de Cloudinary para operaciones de subida.
+        /// </summary>
         private readonly Cloudinary _cloudinary;
 
+        /// <summary>
+        /// Constructor que inicializa la configuración de Cloudinary.
+        /// </summary>
+        /// <param name="config">Configuración de Cloudinary.</param>
         public CloudinaryService(IOptions<CloudinarySettings> config)
         {
             var account = new Account(
@@ -24,6 +34,13 @@ namespace insightflow_workspace_service.Src.Service
             _cloudinary = new Cloudinary(account);
         }
 
+        /// <summary>
+        /// Sube una imagen a Cloudinary y retorna la URL segura (HTTPS).
+        /// </summary>
+        /// <param name="file">Archivo de imagen a subir.</param>
+        /// <returns>URL segura de la imagen subida.</returns>
+        /// <exception cref="ArgumentException">Se lanza si el archivo no es válido.</exception>
+        /// <exception cref="Exception">Se lanza si ocurre un error durante la subida.</exception>
         public async Task<string> UploadImageAsync(IFormFile file)
         {
             // Validar que el archivo sea una imagen
