@@ -1,0 +1,175 @@
+{
+	"info": {
+		"_postman_id": "38717a1e-a682-4ece-9816-cfcfee495803",
+		"name": "insigthflow",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34959430",
+		"_collection_link": "https://ingenieros-ucn.postman.co/workspace/Sen~e5f36ac7-f05c-4b89-a4d3-f75e8554561d/collection/34959430-38717a1e-a682-4ece-9816-cfcfee495803?action=share&source=collection_link&creator=34959430"
+	},
+	"item": [
+		{
+			"name": "Get all workspace",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5053/workspace",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5053",
+					"path": [
+						"workspace"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get by workspace id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5053/workspace/workspace/{a15d25a7-b966-4eb2-a8e6-2c84fc11d50e}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5053",
+					"path": [
+						"workspace",
+						"workspace",
+						"{a15d25a7-b966-4eb2-a8e6-2c84fc11d50e}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get by user id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5053/workspace/{b79cf89e-0b7e-4fb7-be91-2105e56cf6e1}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5053",
+					"path": [
+						"workspace",
+						"{b79cf89e-0b7e-4fb7-be91-2105e56cf6e1}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create workspace",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "Name",
+							"value": "jhonworkspace",
+							"type": "text"
+						},
+						{
+							"key": "Description",
+							"value": "nose",
+							"type": "text"
+						},
+						{
+							"key": "Theme",
+							"value": "hola",
+							"type": "text"
+						},
+						{
+							"key": "Image",
+							"type": "file",
+							"src": "/C:/Users/valle/Downloads/capture_251128_210207.png"
+						},
+						{
+							"key": "OwnerId ",
+							"value": "b79cf89e-0b7e-4fb7-be91-2105e56cf6e1",
+							"type": "text"
+						},
+						{
+							"key": "Username",
+							"value": "jhon",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:5053/workspace",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5053",
+					"path": [
+						"workspace"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update workspace",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "Name",
+							"value": "asdasd777",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:5053/workspace/a15d25a7-b966-4eb2-a8e6-2c84fc11d50e",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5053",
+					"path": [
+						"workspace",
+						"a15d25a7-b966-4eb2-a8e6-2c84fc11d50e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete workspace",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5053/workspace/a15d25a7-b966-4eb2-a8e6-2c84fc11d50e",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5053",
+					"path": [
+						"workspace",
+						"a15d25a7-b966-4eb2-a8e6-2c84fc11d50e"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
